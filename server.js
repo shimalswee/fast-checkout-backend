@@ -7,23 +7,36 @@ const axios = require('axios');
 const Razorpay = require('razorpay');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
+app.use(cors({
+  origin: 'https://guccikids.in',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
 app.use(bodyParser.json());
 
+// Initialize Razorpay instance
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY,
   key_secret: process.env.RAZORPAY_SECRET
 });
 
+// Shopify credentials
 const SHOPIFY_STORE = process.env.SHOPIFY_STORE;
 const SHOPIFY_API_KEY = process.env.SHOPIFY_API_KEY;
 
+// ✅ Route 1 — Submit Order (COD or Prepaid)
 app.post('/submit-order', async (req, res) => {
-  const { name, phone, email, address, city, state, pincode, landmark, cart, discount, shipping, total, method, razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
+  const {
+    name, phone, email, address, city, state, pincode, landmark,
+    cart, discount, shipping, total, method,
+    razorpay_payment_id, razorpay_order_id, razorpay_signature
+  } = req.body;
 
-  // Verify Razorpay signature if prepaid
+  // Prepaid Signature Check
   if (method === 'prepaid') {
     const body = razorpay_order_id + '|' + razorpay_payment_id;
     const expectedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET)
@@ -74,4 +87,12 @@ app.post('/submit-order', async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log('✅ Server running on port 3000'));
+// ✅ Route 2 — Create Razorpay Order (for prepaid)
+app.post('/create-razorpay-order', async (req, res) => {
+  const { amount } = req.body;
+
+  try {
+    const order = await razorpay.orders.create({
+      amount,
+      currency: 'INR',
+      receipt: 'order_rcptid_' + Math.floor(Math.random()

@@ -13,11 +13,6 @@ const cors = require('cors');
 require('dotenv').config();
 
 
-app.use(cors({
-  origin: 'https://guccikids.in',
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type']
-}));
 
 
 const app = express();
@@ -26,6 +21,14 @@ app.use(cors({
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
+
+app.use(cors({
+  origin: 'https://guccikids.in',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
+
+
 app.use(bodyParser.json());
 
 // Initialize Razorpay instance
@@ -33,6 +36,8 @@ const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY,
   key_secret: process.env.RAZORPAY_SECRET
 });
+
+
 
 // Shopify credentials
 const SHOPIFY_STORE = process.env.SHOPIFY_STORE;

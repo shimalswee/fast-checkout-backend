@@ -2,6 +2,8 @@
 // 🔧 BACKEND - server.js
 // =============================
 
+
+
 const express = require('express');
 const axios = require('axios');
 const Razorpay = require('razorpay');
@@ -9,6 +11,16 @@ const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const cors = require('cors');
 require('dotenv').config();
+
+
+const cors = require('cors');
+
+app.use(cors({
+  origin: 'https://guccikids.in',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
+
 
 const app = express();
 app.use(cors({

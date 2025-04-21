@@ -95,4 +95,13 @@ app.post('/create-razorpay-order', async (req, res) => {
     const order = await razorpay.orders.create({
       amount,
       currency: 'INR',
-      receipt: 'order_rcptid_' + Math.floor(Math.random()
+      receipt: 'order_rcptid_' + Math.floor(Math.random() * 100000),
+      payment_capture: 1
+    });
+
+    res.status(200).json(order);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to create Razorpay order' });
+  }
+});

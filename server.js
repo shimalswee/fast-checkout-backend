@@ -3,16 +3,20 @@ const axios = require('axios');
 const Razorpay = require('razorpay');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
-const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
 
-app.use(cors({
-  origin: 'https://guccikids.in',
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type']
-}));
+// ✅ Manually handle all CORS (including OPTIONS)
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://guccikids.in');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 app.use(bodyParser.json());
 
